@@ -1,0 +1,42 @@
+version: 25.0.3
+
+services:
+
+    # Web Server
+    webserver:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: php8.2.12-apache
+        container_name: ${APP_NAME}
+        restart: unless-stopped
+        working_dir: /var/www/html
+        volumes:
+            - .:/var/www/html
+            - ./docker/php/php.ini:/etc/php/conf.d/custom.ini
+            - ./docker/php/000-default.conf:/etc/apache2/sites-available/000-default.conf
+        ports:
+            - "8000:80"
+        environment:
+            APACHE_DOCUMENT_ROOT: /var/www/html/public
+        depends_on:
+            - db
+
+    # Database
+    db:
+        image: mysql:8.3.0
+        container_name: mysql
+        restart: unless-stopped
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+        volumes:
+            - db-storage:/var/lib/mysql
+            - ./docker/msql/my.cnf:/etc/mysql/my.cnf
+
+volumes:
+    db-storage: ~
