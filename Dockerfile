@@ -32,7 +32,6 @@ RUN composer dump-autoload --optimize \
     && php artisan view:cache
 
 # Set permissions
-RUN chmod -R 755 /var/www/html/
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expose port 80 and start Apache
